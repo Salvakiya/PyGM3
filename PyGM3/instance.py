@@ -41,6 +41,7 @@ class Entity(object):
 
     def event_create(self, **kwargs):
         pass
+        
 
     def event_destroy(self):
         # not complete
@@ -50,9 +51,12 @@ class Entity(object):
 
     def event_draw(self):
         if self.sprite is not None and self.visible is True:
-            self.sprite.draw()
+            #self.sprite.draw()
             self.sprite.x = self.x
             self.sprite.y = self.y
+    
+    def event_step(self):
+        pass
 
     def event_step_core(self, delta_time=.1):
         # if we are not active do not preform
@@ -83,10 +87,11 @@ class Entity(object):
             # remove the list of alarms
             for method_alarm in alarms_to_remove:
                 self.alarm.pop(method_alarm)
+        self.event_step()
 
 
 def _create_type_list(entity_type):
-    if entity_type.__name__ in _InstanceController.type_lists:
+    if entity_type.__name__ not in _InstanceController.type_lists:
         # create the list
         _InstanceController.type_lists[entity_type.__name__] = []
 
@@ -135,6 +140,11 @@ def create(entity_type, x=0, y=0, **kwargs):
 
     return weakref.proxy(_InstanceController.entity[assign_id])
 
+def number(entity_type):
+    if entity_type.__name__ not in _InstanceController.type_lists:
+        _create_type_list(entity_type)
+    if entity_type.__name__ in _InstanceController.type_lists:
+        return len(_InstanceController.type_lists[entity_type.__name__])
 
 def identity(obj):
     if isinstance(obj, (int, long)):
