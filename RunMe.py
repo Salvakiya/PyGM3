@@ -21,21 +21,35 @@ class Goblin(instance.Entity):
         self.sprite = sprite.add('annoyed.png', img_number=34, xorg=16, yorg=32, batch=GameSettings.batch)
         self.sprite.scale = self.scale
 
+    def event_step(self):
+        #self.x+=1
+        pass
+
     def play_sound(self):
         sound.play(self.sounder)
-        self.sprite.scale = self.scale
-        self.scale += .1
-        instance.create(Goblin, x=self.x, y=self.y)
-        self.x+=16
-        self.alarm["play_sound"] = 4
+        #self.sprite.scale = self.scale
+        self.scale += 1
+        if instance.number(Goblin)<300:
+            instance.create(Goblin, x=self.x, y=self.y)
+            self.x+=16
+            if self.x>640:
+                self.x = 16
+                self.y+=32
+            self.alarm["play_sound"] = 1
+            print(instance.number(Goblin))
 
-
+#create window
 window = pyglet.window.Window(800, 600, "OpenGL")
 window.set_location(100, 100)
 
 
-instance.create(Goblin,y=300).alarm["play_sound"] = 10
+#create an instance with an alarm
+instance.create(Goblin,y=100).alarm["play_sound"] = 10
+
+#create an instance
 instance.create(Goblin, x=100, y=100)
+
+#create an instance with a special value
 bob = instance.create(Goblin, x=100, y=200)
 
 fps_display = pyglet.clock.ClockDisplay()
@@ -43,6 +57,7 @@ fps_display = pyglet.clock.ClockDisplay()
 def on_draw():
     window.clear()
     fps_display.draw()
+    GameSettings.batch.draw()
     for entity in instance._InstanceController.entity.values():
         entity.event_draw()
 
